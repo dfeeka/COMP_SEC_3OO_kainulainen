@@ -61,11 +61,17 @@ A04: Insecure design
 2. Copied passwords are auto-cleared after 30 seconds if not pasted before that.
 
 A05: Security misconfiguration
-1. File permissions: Vault/log directories use 0c700; files use 0o600 to restrict access
-2. Atomic writes: storage.save_vault writes to a temp file first to prevent partial writes on failure
+1. File permissions: Vault/log directories use 0c700; files use 0o600 to restrict access.
+2. Atomic writes: storage.save_vault writes to a temp file first to prevent partial writes on failure.
 
 A06: Vulnerable components
-1. Cryptography module instead of deprecated library like pycrypto
+1. Cryptography module instead of deprecated library like pycrypto.
+
+A07: Identification and Authentication Failures 
+1. Tracks the failed attempts of the master password.
+
+A09: Monitoring failures
+1. Using the atomic renaming in storage.py makes sure a file operation is completed fully or not at all.
 
 Unimplemented features and known issues
 - 
