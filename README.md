@@ -1,7 +1,7 @@
 COMP.SEC.300 Project - Password Manager
 =======================================
 
-This Python program is a basic local password manager created as a course project (COMP.SEC.300).
+This Python program is a basic local password manager created as a course project (COMP.SEC.300). Tested and implemented using Windows 11 and Python 3.9.
 
 General Description
 -
@@ -37,7 +37,7 @@ The project consists of five files:
 1. ui.py: Manages Tkinter GUI, entry dialogs and other user interactions.
 2. crypto.py: Implements AES-GCM encryption/decryption and PBKDF2 key derivation.
 3. storage.py, Handles vault file I/O, encryption/decryption, and atomic writes.
-4. model.py: Defines a dataclass Entry for credential storage.
+4. model.py: Defines a dataclass entry for credential storage.
 5. main.py: Initializes the app and parses CLI arguments.
 
 The basic data flow is:
@@ -49,26 +49,28 @@ Secure programming solutions (OWASP top 10)
 
 A02: Cryptographic failures
 1. PBKDF2 key stretching: crypto.derive_key uses 200 000 iterations with SHA-256 to resist
-brute-forcing.
-2. AES-GCM encryption: a random 12-byte nonce and 16-byte salt.
-3. Passwords are generated using secrets.choice
+brute-forcing (computationally very expensive to crack). Also meets standards like NIST recommendation.
+2. AES-GCM encryption: a random 12-byte nonce and 16-byte salt makes the data unreadable without the correct key. Salts and nonces
+also defeats rainbow tables and replay attacks.
+3. Passwords are generated using secrets.choice, which makes the generated passwords very resistant to brute-forcing and guessing.
 
 A03: Injection
-1. User inputs are treated as strings, not executable code.
+1. User inputs are treated as strings, not executable code. This makes sure that no changes can made through the user inputs.
 
 A04: Insecure design
-1. Master password is required to decrypt the vault. 3 failed tries closes the app.
-2. Copied passwords are auto-cleared after 30 seconds if not pasted before that.
+1. Master password is required to decrypt the vault. This makes sure unauthorized access is not possible.
+2. Copied passwords are auto-cleared after 30 seconds if not pasted before that, which reduces the risk of apps or malware harvesting the password.
 
 A05: Security misconfiguration
-1. File permissions: Vault/log directories use 0c700; files use 0o600 to restrict access.
-2. Atomic writes: storage.save_vault writes to a temp file first to prevent partial writes on failure.
+1. File permissions: Vault/log directories use 0c700; files use 0o600 to restrict access to prevent other users/processes on the same
+machine from reading sensitive data.
+2. Atomic writes: storage.save_vault writes to a temp file first to prevent partial writes on failure, which avoids data corruption or partial exposure.
 
 A06: Vulnerable components
-1. Cryptography module instead of deprecated library like pycrypto.
+1. A frequently updated and up-to-date Cryptography module instead of a deprecated library like pycrypto.
 
 A07: Identification and Authentication Failures 
-1. Tracks the failed attempts of the master password.
+1. Tracks the failed attempts of the master password, and 3 failed attempts quits the program, which prevents unauthorized use.
 
 A09: Monitoring failures
 1. Using the atomic renaming in storage.py makes sure a file operation is completed fully or not at all.
